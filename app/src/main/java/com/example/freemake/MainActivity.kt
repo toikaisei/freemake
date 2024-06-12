@@ -10,7 +10,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +44,7 @@ class MainActivity : ComponentActivity() {
                     Column (modifier = Modifier.padding(innerPadding)) {
                         Counter()
                         TimeNow()
+                        List1()
                     }
 
                 }
@@ -59,7 +63,7 @@ fun Counter() {
         )
         var count by remember { mutableStateOf(0) }
         Text(
-            text = "$count",
+            text = "%,d".format(count),
         )
         Button(
             onClick = { count++ }
@@ -74,19 +78,60 @@ fun Counter() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     FreeMakeTheme {
-        Counter()
+        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            Column (modifier = Modifier.padding(innerPadding)) {
+                Counter()
+                TimeNow()
+                List1()
+            }
+
+        }
+
     }
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimeNow() {
-    val dateAndtime: LocalDateTime = LocalDateTime.now()
-    val onlyDate: LocalDate = LocalDate.now()
+    Row() {
 
-    Text("Current date and time: $dateAndtime")
-    Text("Current date: $onlyDate")
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+        val formatted = current.format(formatter)
+
+        Text(formatted)
+        Text(
+            text = "コメント"
+        )
+        Button(
+            onClick = { "" }
+        ) {
+            Text(text = "追加")
+        }
+    }
+}
+@Composable
+fun List1() {
+    Row() {
+        val fruits = listOf("Apple", "Orange", "Grape", "Peach", "Strawberry")
+        val checked = remember { mutableStateOf(true) }
+
+        Checkbox(
+            modifier = Modifier
+                .size(24.dp),
+            checked = checked.value,
+            onCheckedChange = { checked.value = it },
+        )
+        LazyColumn {
+            items(fruits) { fruit ->
+                Text(text = "This is $fruit")
+            }
+        }
+
+    }
+
 }
