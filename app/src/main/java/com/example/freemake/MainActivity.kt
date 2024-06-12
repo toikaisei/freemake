@@ -118,14 +118,7 @@ fun TimeNow() {
 fun List1() {
     Row() {
         val fruits = listOf("Apple", "Orange", "Grape", "Peach", "Strawberry")
-        val checked = remember { mutableStateOf(true) }
-
-        Checkbox(
-            modifier = Modifier
-                .size(24.dp),
-            checked = checked.value,
-            onCheckedChange = { checked.value = it },
-        )
+        CheckableCheckbox()
         LazyColumn {
             items(fruits) { fruit ->
                 Text(text = "This is $fruit")
@@ -135,3 +128,8 @@ fun List1() {
     }
 
 }
+@Composable
+fun CheckableCheckbox() {
+    Checkbox(checked = true, onCheckedChange = {})
+}
+
