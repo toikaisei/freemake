@@ -6,14 +6,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,9 +46,29 @@ class MainActivity : ComponentActivity() {
             FreeMakeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column (modifier = Modifier.padding(innerPadding)) {
-                        Counter()
-                        TimeNow()
-                        List1()
+                        var count: Int = 0
+                        var counter: Int = Counter(count)
+                        val current = LocalDateTime.now()
+                        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+                        val formatted = current.format(formatter)
+                        formatted.toString()
+                        Row() {
+                            TimeNow(formatted)
+                            Comment()
+                            Addition()
+                        }
+                        Row() {
+                            CheckableCheckbox()
+                            List(formatted, counter)
+                            Comment()
+                            Delete()
+                        }
+
+                        Row() {
+                            Clear()
+                            TotalCalc()
+                        }
+
                     }
 
                 }
@@ -55,13 +79,12 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Counter() {
-
+fun Counter(count: Int): Int {
+    var count by remember { mutableStateOf(0) }
     Row() {
         Text(
             text = "数量",
         )
-        var count by remember { mutableStateOf(0) }
         Text(
             text = "%,d".format(count),
         )
@@ -76,8 +99,8 @@ fun Counter() {
             Text(text = "ー")
         }
     }
+    return count
 }
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
@@ -85,9 +108,27 @@ fun GreetingPreview() {
     FreeMakeTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             Column (modifier = Modifier.padding(innerPadding)) {
-                Counter()
-                TimeNow()
-                List1()
+                var count: Int = 0
+                var counter:Int = Counter(count)
+                val current = LocalDateTime.now()
+                val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+                val formatted = current.format(formatter)
+                Row {
+                    TimeNow(formatted)
+                    Comment()
+                    Addition()
+                }
+                Row() {
+                    CheckableCheckbox()
+                    List(formatted, counter)
+                    Comment()
+                    Delete()
+                }
+                Row {
+                    Clear()
+                    TotalCalc()
+                }
+
             }
 
         }
@@ -96,40 +137,77 @@ fun GreetingPreview() {
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TimeNow() {
-    Row() {
-
-        val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-        val formatted = current.format(formatter)
-
-        Text(formatted)
-        Text(
-            text = "コメント"
-        )
-        Button(
-            onClick = { "" }
-        ) {
-            Text(text = "追加")
-        }
-    }
+fun TimeNow(formatted: String) {
+    return Text(formatted)
 }
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun List1() {
-    Row() {
-        val fruits = listOf("Apple", "Orange", "Grape", "Peach", "Strawberry")
-        CheckableCheckbox()
-        LazyColumn {
-            items(fruits) { fruit ->
-                Text(text = "This is $fruit")
+fun List(formatted: String, count: Int) {
+        val stock = listOf(formatted, count)
+        LazyRow {
+            items(stock) { stock ->
+                    Text(text = "$stock")
             }
         }
-
-    }
-
 }
 @Composable
 fun CheckableCheckbox() {
-    Checkbox(checked = true, onCheckedChange = {})
+    val checked = remember { mutableStateOf(true) }
+    Checkbox(
+        modifier = Modifier
+            .size(24.dp),
+        checked = checked.value,
+        onCheckedChange = { checked.value = it },
+    )
 }
+@Composable
+fun Clear() {
+    Row() {
+        Button(
+            onClick = { "" }
+        ) {
+            Text(text = "クリア")
+        }
+    }
 
+}
+@Composable
+fun TotalCalc() {
+    Button(
+        onClick = { "" }
+    ) {
+        Text(text = "選択された合計数量")
+    }
+}
+@Composable
+fun Delete() {
+    Button(
+        onClick = { "" }
+    ) {
+        Text(text = "削除")
+    }
+}
+@Composable
+fun Comment() {
+    Text(text = "コメント")
+/*    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        var text by remember { mutableStateOf("") }
+        OutlinedTextField(
+            value = text,
+            onValueChange = { text = it },
+            modifier = Modifier.padding(10.dp),
+            label = { Text(text = "コメント") }
+        )
+    }*/
+}
+@Composable
+fun Addition() {
+    Button(
+        onClick = { "" }
+    ) {
+        Text(text = "追加")
+    }
+}
