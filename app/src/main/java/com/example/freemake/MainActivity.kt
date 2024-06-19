@@ -43,49 +43,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            FreeMakeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column (modifier = Modifier.padding(innerPadding)) {
-                        var count: Int = 0
-                        var counter: Int = Counter(count)
-                        val current = LocalDateTime.now()
-                        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-                        val formatted = current.format(formatter)
-                        formatted.toString()
-                        Row() {
-                            TimeNow(formatted)
-                            Comment()
-                            Addition()
-                        }
-                        Row() {
-                            CheckableCheckbox()
-                            List(formatted, counter)
-                            Comment()
-                            Delete()
-                        }
+            Freemake()
 
-                        Row() {
-                            Clear()
-                            TotalCalc()
-                        }
-
-                    }
-
-                }
-
-            }
         }
     }
 }
 
 @Composable
-fun Counter(count: Int): Int {
+fun addCounter(count: Int): Int {
     var count by remember { mutableStateOf(0) }
-    Row() {
-        Text(
-            text = "数量",
-        )
-        Text(
+     Text(
             text = "%,d".format(count),
         )
         Button(
@@ -98,43 +65,51 @@ fun Counter(count: Int): Int {
         ) {
             Text(text = "ー")
         }
-    }
     return count
 }
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun Freemake() {
     FreeMakeTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Column (modifier = Modifier.padding(innerPadding)) {
-                var count: Int = 0
-                var counter:Int = Counter(count)
+            Column(modifier = Modifier.padding(innerPadding)) {
+                Row() {
+                    Text(text = "数量")
+                    var count: Int = 0
+                    var counter: Int = addCounter(count)
+                }
                 val current = LocalDateTime.now()
                 val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
                 val formatted = current.format(formatter)
-                Row {
+                formatted.toString()
+
+                Row() {
                     TimeNow(formatted)
                     Comment()
                     Addition()
                 }
                 Row() {
                     CheckableCheckbox()
-                    List(formatted, counter)
+//                    List()
                     Comment()
                     Delete()
                 }
-                Row {
+
+                Row() {
                     Clear()
                     TotalCalc()
                 }
 
             }
-
         }
-
     }
 }
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview
+@Composable
+fun GreetingPreview() {
+    Freemake()
+}
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimeNow(formatted: String) {
@@ -144,6 +119,7 @@ fun TimeNow(formatted: String) {
 @Composable
 fun List(formatted: String, count: Int) {
         val stock = listOf(formatted, count)
+        val stockList = mutableListOf(stock)
         LazyRow {
             items(stock) { stock ->
                     Text(text = "$stock")
@@ -182,7 +158,7 @@ fun TotalCalc() {
 @Composable
 fun Delete() {
     Button(
-        onClick = { "" }
+        onClick = {  }
     ) {
         Text(text = "削除")
     }
@@ -206,7 +182,7 @@ fun Comment() {
 @Composable
 fun Addition() {
     Button(
-        onClick = { "" }
+        onClick = {""}
     ) {
         Text(text = "追加")
     }
